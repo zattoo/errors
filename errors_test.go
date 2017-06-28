@@ -62,38 +62,38 @@ func TestCause(t *testing.T) {
 		err  error
 		want error
 	}{{
-		// nil error is nil
+		// 1: nil error is nil
 		err:  nil,
 		want: nil,
 	}, {
-		// explicit nil error is nil
+		// 2: explicit nil error is nil
 		err:  (error)(nil),
 		want: nil,
 	}, {
-		// typed nil is nil
+		// 3: typed nil is nil
 		err:  (*nilError)(nil),
 		want: (*nilError)(nil),
 	}, {
-		// uncaused error is unaffected
+		// 4: uncaused error is unaffected
 		err:  io.EOF,
 		want: io.EOF,
 	}, {
-		// caused error returns cause
+		// 5: caused error returns cause
 		err:  Wrap(io.EOF, "ignored"),
 		want: io.EOF,
-	}, {
-		err:  x, // return from errors.New
+	}, {	// 6: an errors.New() should Cause() to itself.
+		err:  x,
 		want: x,
-	}, {
+	}, {	// 6: a WithMessage wrapping nil should still be nil
 		WithMessage(nil, "whoops"),
 		nil,
-	}, {
+	}, {	// 7: a WithMessage wrapping io.EOF should Cause() to io.EOF
 		WithMessage(io.EOF, "whoops"),
 		io.EOF,
-	}, {
+	}, {	// 8: a WithStack wrapping nil should still be nil
 		WithStack(nil),
 		nil,
-	}, {
+	}, {	// 9: a WithStack wrapping io.EOF should Cause() to io.EOF
 		WithStack(io.EOF),
 		io.EOF,
 	}}
